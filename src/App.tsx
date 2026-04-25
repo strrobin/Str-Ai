@@ -103,6 +103,7 @@ export default function App() {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [activePlatformTab, setActivePlatformTab] = useState<"youtube" | "facebook" | "tiktok">("youtube");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("viralquest_history");
@@ -157,8 +158,8 @@ export default function App() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 25 * 1024 * 1024) {
-      alert("File too large. Please select a file smaller than 25MB.");
+    if (file.size > 5 * 1024 * 1024 * 1024) {
+      alert("File too large. Please select a file smaller than 5GB.");
       return;
     }
 
@@ -249,37 +250,126 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col transition-colors duration-300 bg-bg text-text">
-      {/* Navbar */}
-      <nav className="h-16 md:h-20 px-4 md:px-6 flex items-center justify-between bg-bg/70 backdrop-blur-2xl border-b border-white/5 sticky top-0 z-50">
-        <div className="flex items-center gap-2 md:gap-3">
-          <div className="google-blue-gradient p-1.5 md:p-2 rounded-lg md:rounded-xl text-white shadow-lg shadow-brand/20">
-            <ZapIcon className="w-4 h-4 md:w-5 md:h-5 fill-current" />
+      {/* Navbar - Elite Design */}
+      <nav className="h-16 md:h-24 px-6 md:px-12 flex items-center justify-between bg-bg/80 backdrop-blur-3xl border-b border-white/5 sticky top-0 z-50 transition-all duration-500">
+        <div className="flex items-center gap-3 group cursor-pointer" onClick={() => { setActiveTab('analyze'); setResult(null); setWorkflowStep('idle'); }}>
+          <div className="bg-brand p-2 md:p-2.5 rounded-2xl text-white shadow-2xl shadow-brand/40 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
+            <ZapIcon className="w-5 h-5 md:w-6 md:h-6 fill-current" />
           </div>
-          <span className="font-display text-lg md:text-xl font-black tracking-tighter text-text italic">STR <span className="text-brand not-italic">AI</span></span>
+          <div className="flex flex-col -gap-1">
+            <span className="font-display text-xl md:text-2xl font-black tracking-tighter text-text italic leading-none">STR <span className="text-brand not-italic">AI</span></span>
+            <span className="text-[9px] font-bold text-brand uppercase tracking-[0.2em] opacity-80 leading-none mt-0.5">Revolutionizing Content</span>
+          </div>
         </div>
         
-        <div className="hidden md:flex items-center gap-10 text-sm font-bold text-text-muted">
+        <div className="hidden md:flex items-center gap-12 bg-white/5 px-8 py-3 rounded-[2.5rem] border border-white/5 shadow-inner">
           <button 
             onClick={() => { setActiveTab('transcribe'); setResult(null); setWorkflowStep('idle'); }}
-            className={`hover:text-brand transition-all flex items-center gap-2 relative group ${activeTab === 'transcribe' ? 'text-brand' : ''}`}
+            className={`text-sm font-black uppercase tracking-widest transition-all hover:text-brand flex items-center gap-2.5 ${activeTab === 'transcribe' ? 'text-brand' : 'text-text-muted opacity-80'}`}
           >
-            <Mic className={`w-4 h-4 ${activeTab === 'transcribe' ? 'text-brand' : ''}`} /> আপলোড করুন
-            {activeTab === 'transcribe' && <motion.div layoutId="nav-pill" className="absolute -bottom-[26px] left-0 right-0 h-1 bg-brand rounded-full" />}
+            <Mic className="w-4 h-4" /> আপলোড
           </button>
+          <div className="w-px h-4 bg-white/10" />
           <button 
             onClick={() => { setActiveTab('analyze'); setWorkflowStep('idle'); }}
-            className={`hover:text-brand transition-all flex items-center gap-2 relative group ${activeTab === 'analyze' ? 'text-brand' : ''}`}
+            className={`text-sm font-black uppercase tracking-widest transition-all hover:text-brand flex items-center gap-2.5 ${activeTab === 'analyze' ? 'text-brand' : 'text-text-muted opacity-80'}`}
           >
-            <Zap className={`w-4 h-4 ${activeTab === 'analyze' ? 'text-brand' : ''}`} /> জেনারেট কনটেন্ট
-            {activeTab === 'analyze' && <motion.div layoutId="nav-pill" className="absolute -bottom-[26px] left-0 right-0 h-1 bg-brand rounded-full" />}
+            <Zap className="w-4 h-4" /> জেনারেট
           </button>
         </div>
 
-        <div className="flex items-center gap-2 md:gap-4">
+        <div className="flex items-center gap-3">
+          <button 
+            className="hidden md:flex btn-primary !px-7 !py-3 !rounded-[2rem] !text-xs !font-black !tracking-widest uppercase shadow-xl shadow-brand/30 hover:scale-105 active:scale-95 transition-all"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          >
+            Start Creating
+          </button>
+          
+          <button 
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="md:hidden w-12 h-12 flex items-center justify-center text-text hover:bg-white/5 rounded-2xl transition-all border border-white/5"
+          >
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={isMenuOpen ? "close" : "menu"}
+                initial={{ opacity: 0, rotate: -90 }}
+                animate={{ opacity: 1, rotate: 0 }}
+                exit={{ opacity: 0, rotate: 90 }}
+                transition={{ duration: 0.2 }}
+              >
+                {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </motion.div>
+            </AnimatePresence>
+          </button>
         </div>
+
+        {/* Mobile Menu Overlay - Smooth Slide */}
+        <AnimatePresence>
+          {isMenuOpen && (
+            <>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsMenuOpen(false)}
+                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] md:hidden"
+              />
+              <motion.div
+                initial={{ x: "100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "100%" }}
+                transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                className="fixed top-0 right-0 bottom-0 w-[80%] max-w-sm bg-bg border-l border-white/5 z-[70] p-8 md:hidden shadow-[-20px_0_50px_rgba(0,0,0,0.5)]"
+              >
+                <div className="space-y-12">
+                  <div className="flex items-center justify-between">
+                     <span className="font-display font-black text-2xl italic">STR <span className="text-brand not-italic">AI</span></span>
+                     <button onClick={() => setIsMenuOpen(false)} className="p-2 bg-white/5 rounded-xl"><X className="w-6 h-6" /></button>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-brand opacity-60 ml-4">Navigation</p>
+                    <button 
+                      onClick={() => { setActiveTab('transcribe'); setResult(null); setWorkflowStep('idle'); setIsMenuOpen(false); }}
+                      className={`w-full flex items-center gap-5 p-5 rounded-3xl transition-all ${activeTab === 'transcribe' ? 'bg-brand/10 text-brand ring-1 ring-brand/20' : 'text-text-muted hover:bg-white/5'}`}
+                    >
+                      <div className={`p-2.5 rounded-xl ${activeTab === 'transcribe' ? 'bg-brand text-white' : 'bg-white/5'}`}>
+                        <Mic className="w-5 h-5" />
+                      </div>
+                      <div className="text-left">
+                        <p className="font-bold text-lg">অডিও ও ভিডিও</p>
+                        <p className="text-xs opacity-60">ট্রান্সক্রিপ্ট তৈরি করুন</p>
+                      </div>
+                    </button>
+                    
+                    <button 
+                      onClick={() => { setActiveTab('analyze'); setWorkflowStep('idle'); setIsMenuOpen(false); }}
+                      className={`w-full flex items-center gap-5 p-5 rounded-3xl transition-all ${activeTab === 'analyze' ? 'bg-brand/10 text-brand ring-1 ring-brand/20' : 'text-text-muted hover:bg-white/5'}`}
+                    >
+                      <div className={`p-2.5 rounded-xl ${activeTab === 'analyze' ? 'bg-brand text-white' : 'bg-white/5'}`}>
+                        <Zap className="w-5 h-5" />
+                      </div>
+                      <div className="text-left">
+                        <p className="font-bold text-lg">জেনারেট কনটেন্ট</p>
+                        <p className="text-xs opacity-60">ভাইরাল ম্যাজিক শুরু করুন</p>
+                      </div>
+                    </button>
+                  </div>
+
+                  <div className="pt-20">
+                    <button className="w-full btn-primary py-5 rounded-3xl font-black uppercase tracking-widest text-sm shadow-2xl shadow-brand/40">
+                      Start Creating Now
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
       </nav>
 
-      <main className="flex-1 bg-bg pb-32 md:pb-0">
+      <main className="flex-1 bg-bg pb-10 md:pb-0">
         <AnimatePresence mode="wait">
           {activeTab === 'transcribe' ? (
             /* Transcribe Workflow */
@@ -306,7 +396,7 @@ export default function App() {
                     </div>
                     <div className="space-y-1">
                       <p className="text-xl font-bold text-text">এখানে ফাইল আপলোড করুন</p>
-                      <p className="text-sm text-text-muted">MP3, WAV, MP4, MOV (Max 25MB)</p>
+                      <p className="text-sm text-text-muted">MP3, WAV, MP4, MOV (Max 5GB)</p>
                     </div>
                     <input type="file" className="hidden" accept="audio/*,video/*" onChange={handleFileUpload} />
                   </label>
@@ -397,12 +487,12 @@ export default function App() {
                   টেক্সট থেকে <br /> <span className="text-google-blue">ভাইরাল কনটেন্ট</span> তৈরি করুন
                 </h1>
 
-                <div className="google-card p-6 !rounded-[2rem] border-2 border-google-blue/10 bg-bg-faint dark:bg-dark-bg focus-within:border-google-blue focus-within:shadow-2xl transition-all">
-                   <div className="flex items-center justify-between mb-4">
-                      <label className="text-xs font-bold text-google-grey-dark dark:text-dark-text flex items-center gap-2">
-                        <Edit3 className="w-4 h-4 text-google-blue" /> স্ক্রিপ্ট বা ট্রান্সক্রিপ্ট দিন
+                <div className="google-card p-4 md:p-6 !rounded-[2rem] border-2 border-google-blue/10 bg-bg-faint dark:bg-dark-bg focus-within:border-google-blue focus-within:shadow-2xl transition-all">
+                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+                      <label className="text-sm font-bold text-google-grey-dark dark:text-dark-text flex items-center gap-2">
+                        <Edit3 className="w-5 h-5 text-google-blue" /> স্ক্রিপ্ট বা ট্রান্সক্রিপ্ট দিন
                       </label>
-                      <div className="flex gap-2">
+                      <div className="flex items-center gap-2">
                         <button 
                           onClick={async () => {
                             try {
@@ -412,11 +502,11 @@ export default function App() {
                               console.error("Paste failed", e);
                             }
                           }}
-                          className="px-4 py-1.5 bg-google-blue/10 text-google-blue text-[10px] font-bold rounded-full hover:bg-google-blue hover:text-white transition-all"
+                          className="flex-1 sm:flex-none px-4 py-2 bg-google-blue/10 text-google-blue text-[11px] font-bold rounded-full hover:bg-google-blue hover:text-white transition-all text-center"
                         >পেস্ট করুন</button>
                         <button 
                          onClick={() => setInput(prev => ({ ...prev, transcript: "" }))}
-                         className="px-4 py-1.5 bg-rose-50 text-rose-500 text-[10px] font-bold rounded-full hover:bg-rose-500 hover:text-white transition-all"
+                         className="flex-1 sm:flex-none px-4 py-2 bg-rose-50 text-rose-500 text-[11px] font-bold rounded-full hover:bg-rose-500 hover:text-white transition-all text-center"
                         >মুছে ফেলুন</button>
                       </div>
                    </div>
@@ -900,87 +990,82 @@ export default function App() {
       <div className="md:hidden fixed bottom-28 right-6 z-50">
       </div>
 
-      {/* Footer */}
-      <footer className="py-20 md:py-32 bg-bg border-t border-white/5 pb-40">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-12 mb-20 text-center md:text-left">
-            <div className="flex flex-col items-center md:items-start gap-6 max-w-sm">
-              <div className="flex items-center gap-3 group">
-                <div className="w-12 h-12 bg-brand rounded-[1.25rem] flex items-center justify-center text-white shadow-2xl shadow-brand/30 group-hover:rotate-6 transition-transform">
+      {/* Footer - Professional Polish */}
+      <footer className="bg-bg border-t border-white/5 pt-24 pb-44 md:pb-24">
+        <div className="max-w-7xl mx-auto px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-24">
+            <div className="col-span-1 md:col-span-2 lg:col-span-1 space-y-8">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-white/5 rounded-[1.25rem] border border-white/10 flex items-center justify-center text-brand">
                   <ZapIcon className="w-6 h-6 fill-current" />
                 </div>
-                <span className="font-display font-black text-3xl text-text tracking-tighter italic">STR <span className="text-brand not-italic">AI</span></span>
+                <span className="font-display font-black text-3xl italic tracking-tighter">STR <span className="text-brand not-italic">AI</span></span>
               </div>
-              <p className="text-base text-text-muted leading-relaxed font-medium">
-                আপনার কনটেন্টকে ভাইরাল করার জন্য উন্নত এআই প্রযুক্তি। দ্রুত এবং নির্ভুল ভাবে কাজ করতে আমরা বদ্ধপরিকর।
+              <p className="text-base text-text-muted leading-relaxed font-medium opacity-80 max-w-xs">
+                Next-generation content optimization driven by elite-level AI algorithms. Bangladesh's premier platform for viral results.
               </p>
-            </div>
-            
-            <div className="flex items-center gap-16 md:gap-24">
-              <div className="space-y-6">
-                <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-brand opacity-80">সোশ্যাল লিংক</h4>
-                <ul className="space-y-4 text-sm font-bold text-text-muted">
-                  <li>
-                    <a href="https://www.facebook.com/profile.php?id=61586575149744" target="_blank" rel="noopener noreferrer" className="hover:text-brand transition-all flex items-center justify-center md:justify-start gap-3 group">
-                      <div className="w-8 h-8 rounded-full bg-blue-900/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <Facebook className="w-4 h-4 text-blue-600" /> 
-                      </div>
-                      <span className="border-b-2 border-transparent group-hover:border-brand transition-all">Str Robin</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="https://www.tiktok.com/@strrobin1" target="_blank" rel="noopener noreferrer" className="hover:text-brand transition-all flex items-center justify-center md:justify-start gap-3 group">
-                      <div className="w-8 h-8 rounded-full bg-rose-900/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <Music className="w-4 h-4 text-rose-500" /> 
-                      </div>
-                      <span className="border-b-2 border-transparent group-hover:border-brand transition-all">TikTok</span>
-                    </a>
-                  </li>
-                </ul>
+              <div className="flex gap-4">
+                <a href="#" className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-text-muted hover:bg-brand hover:text-white hover:border-brand transition-all">
+                  <Facebook className="w-5 h-5" />
+                </a>
+                <a href="#" className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-text-muted hover:bg-brand hover:text-white hover:border-brand transition-all">
+                  <Smartphone className="w-5 h-5" />
+                </a>
+                <a href="#" className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-text-muted hover:bg-brand hover:text-white hover:border-brand transition-all">
+                  <Share2 className="w-5 h-5" />
+                </a>
               </div>
+            </div>
+
+            <div className="space-y-8">
+              <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-brand">Products</h4>
+              <ul className="space-y-4 text-sm font-bold text-text-muted">
+                <li><button onClick={() => { setActiveTab('analyze'); setResult(null); }} className="hover:text-brand transition-colors">Video Optimizer</button></li>
+                <li><button onClick={() => { setActiveTab('transcribe'); setResult(null); }} className="hover:text-brand transition-colors">Smart Transcriber</button></li>
+                <li><a href="#" className="hover:text-brand transition-colors">Elite Viral Strategy</a></li>
+                <li><a href="#" className="hover:text-brand transition-colors">SEO Matrix</a></li>
+              </ul>
+            </div>
+
+            <div className="space-y-8">
+              <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-brand">Connect</h4>
+              <ul className="space-y-4 text-sm font-bold text-text-muted">
+                <li><a href="https://www.facebook.com/profile.php?id=61586575149744" target="_blank" className="hover:text-brand transition-colors flex items-center gap-2">Str Robin (FB) <ArrowRight className="w-3 h-3" /></a></li>
+                <li><a href="https://www.tiktok.com/@strrobin1" target="_blank" className="hover:text-brand transition-colors flex items-center gap-2">TikTok Channel <ArrowRight className="w-3 h-3" /></a></li>
+                <li><a href="#" className="hover:text-brand transition-colors">Discord Community</a></li>
+                <li><a href="#" className="hover:text-brand transition-colors">Email Support</a></li>
+              </ul>
+            </div>
+
+            <div className="space-y-8">
+              <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-brand">Support</h4>
+              <ul className="space-y-4 text-sm font-bold text-text-muted">
+                <li><a href="#" className="hover:text-brand transition-colors">Help Center</a></li>
+                <li><a href="#" className="hover:text-brand transition-colors">API Documentation</a></li>
+                <li><a href="#" className="hover:text-brand transition-colors">Privacy Policy</a></li>
+                <li><a href="#" className="hover:text-brand transition-colors">Terms of Service</a></li>
+              </ul>
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row items-center justify-between pt-12 border-t border-white/5 text-[11px] text-text-muted">
-            <div className="flex flex-col items-center md:items-start gap-2">
-              <p className="font-bold text-sm md:text-lg text-text">© 2026 Developed by <span className="text-brand decoration-2 underline-offset-4">Str Robin</span></p>
-              <p className="opacity-60 font-medium tracking-wide">বাংলার নিজস্ব এআই প্ল্যাটফর্ম। সর্বস্বত্ব সংরক্ষিত।</p>
+          <div className="flex flex-col lg:flex-row items-center justify-between pt-12 border-t border-white/5 space-y-10 lg:space-y-0">
+            <div className="text-center lg:text-left space-y-2">
+              <p className="text-lg font-black text-text italic">© 2026 Crafted by <span className="text-brand not-italic">Str Robin</span></p>
+              <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest opacity-60">Revolutionizing the Bengali Creator Ecosystem</p>
             </div>
-            <div className="flex gap-4 mt-10 md:mt-0">
-              <div className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/5 rounded-2xl font-bold shadow-sm"><Globe className="w-3.5 h-3.5 text-brand" /> Bengali (BD)</div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-2xl font-bold shadow-sm"><ShieldCheck className="w-3.5 h-3.5" /> Secured & Optimized</div>
+
+            <div className="flex flex-wrap justify-center gap-4">
+              <div className="flex items-center gap-2.5 px-5 py-2.5 bg-white/5 border border-white/5 rounded-2xl text-[10px] font-black uppercase tracking-widest text-text-muted">
+                <Globe className="w-3.5 h-3.5 text-brand" /> Bengali (BD)
+              </div>
+              <div className="flex items-center gap-2.5 px-5 py-2.5 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-[10px] font-black uppercase tracking-widest text-emerald-400">
+                <ShieldCheck className="w-3.5 h-3.5" /> Secure Platform
+              </div>
             </div>
           </div>
         </div>
       </footer>
 
-      {/* Mobile Bottom Navigation - Elite App Style */}
-      <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-[360px] h-16 bg-bg/90 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] z-50 flex items-center justify-around px-1">
-        {[
-          { id: 'transcribe', icon: Mic, label: 'আপলোড' },
-          { id: 'analyze', icon: Zap, label: 'জেনারেট' },
-        ].map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => { setActiveTab(tab.id as any); setResult(null); setWorkflowStep('idle'); }}
-            className={`relative flex flex-col items-center justify-center gap-0.5 transition-all duration-500 flex-1 h-full py-1 ${activeTab === tab.id ? 'text-brand' : 'text-text-muted opacity-60'}`}
-          >
-            <div className={`p-1.5 rounded-2xl transition-all duration-500 ${activeTab === tab.id ? 'bg-brand/10 scale-105 shadow-sm' : 'bg-transparent scale-100'}`}>
-              <tab.icon className={`w-5 h-5 ${activeTab === tab.id ? 'stroke-[2.5px]' : 'stroke-2'}`} />
-            </div>
-            <span className={`text-[10px] font-bold uppercase tracking-wider transition-all duration-500 ${activeTab === tab.id ? 'opacity-100' : 'opacity-70'}`}>
-              {tab.label}
-            </span>
-            {activeTab === tab.id && (
-              <motion.div 
-                layoutId="nav-active-bg" 
-                className="absolute inset-x-2 inset-y-1 bg-white/[0.02] rounded-3xl -z-10"
-                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-              />
-            )}
-          </button>
-        ))}
-      </div>
     </div>
   );
 }
