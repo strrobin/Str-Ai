@@ -304,7 +304,7 @@ export default function App() {
           </button>
         </div>
 
-        {/* Mobile Menu Overlay - Smooth Slide */}
+        {/* Mobile Menu Overlay - Refined Design */}
         <AnimatePresence>
           {isMenuOpen && (
             <>
@@ -313,54 +313,62 @@ export default function App() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => setIsMenuOpen(false)}
-                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] md:hidden"
+                className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60] md:hidden"
               />
               <motion.div
                 initial={{ x: "100%" }}
                 animate={{ x: 0 }}
                 exit={{ x: "100%" }}
                 transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                className="fixed top-0 right-0 bottom-0 w-[80%] max-w-sm bg-bg border-l border-white/5 z-[70] p-8 md:hidden shadow-[-20px_0_50px_rgba(0,0,0,0.5)]"
+                className="fixed top-0 right-0 bottom-0 w-[85%] max-w-sm bg-[#0a0a0a] border-l border-white/10 z-[70] p-8 md:hidden shadow-[-20px_0_100px_rgba(0,0,0,1)]"
               >
-                <div className="space-y-12">
-                  <div className="flex items-center justify-between">
-                     <span className="font-display font-black text-2xl italic">STR <span className="text-brand not-italic">AI</span></span>
-                     <button onClick={() => setIsMenuOpen(false)} className="p-2 bg-white/5 rounded-xl"><X className="w-6 h-6" /></button>
+                <div className="h-full flex flex-col">
+                  <div className="flex items-center justify-between mb-16">
+                     <div className="flex items-center gap-3">
+                        <div className="bg-brand p-2 rounded-xl text-white">
+                          <ZapIcon className="w-5 h-5 fill-current" />
+                        </div>
+                        <span className="font-display font-black text-2xl italic tracking-tighter">STR <span className="text-brand not-italic">AI</span></span>
+                     </div>
+                     <button onClick={() => setIsMenuOpen(false)} className="p-3 bg-white/5 rounded-2xl border border-white/10 text-white"><X className="w-6 h-6" /></button>
                   </div>
                   
-                  <div className="space-y-4">
-                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-brand opacity-60 ml-4">Navigation</p>
+                  <div className="flex-1 space-y-6">
+                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-brand opacity-60 ml-4 mb-4">Main Navigation</p>
                     <button 
                       onClick={() => { setActiveTab('transcribe'); setResult(null); setWorkflowStep('idle'); setIsMenuOpen(false); }}
-                      className={`w-full flex items-center gap-5 p-5 rounded-3xl transition-all ${activeTab === 'transcribe' ? 'bg-brand/10 text-brand ring-1 ring-brand/20' : 'text-text-muted hover:bg-white/5'}`}
+                      className={`w-full flex items-center gap-5 p-5 rounded-3xl transition-all ${activeTab === 'transcribe' ? 'bg-brand/20 text-brand ring-1 ring-brand/30' : 'text-text-muted hover:bg-white/5'}`}
                     >
-                      <div className={`p-2.5 rounded-xl ${activeTab === 'transcribe' ? 'bg-brand text-white' : 'bg-white/5'}`}>
-                        <Mic className="w-5 h-5" />
+                      <div className={`p-3 rounded-2xl ${activeTab === 'transcribe' ? 'bg-brand text-white shadow-lg shadow-brand/40' : 'bg-white/10'}`}>
+                        <Mic className="w-6 h-6" />
                       </div>
                       <div className="text-left">
-                        <p className="font-bold text-lg">অডিও ও ভিডিও</p>
-                        <p className="text-xs opacity-60">ট্রান্সক্রিপ্ট তৈরি করুন</p>
+                        <p className="font-black text-lg">অডিও ও ভিডিও</p>
+                        <p className="text-xs opacity-60 font-medium">ট্রান্সক্রিপ্ট তৈরি করুন</p>
                       </div>
                     </button>
                     
                     <button 
                       onClick={() => { setActiveTab('analyze'); setWorkflowStep('idle'); setIsMenuOpen(false); }}
-                      className={`w-full flex items-center gap-5 p-5 rounded-3xl transition-all ${activeTab === 'analyze' ? 'bg-brand/10 text-brand ring-1 ring-brand/20' : 'text-text-muted hover:bg-white/5'}`}
+                      className={`w-full flex items-center gap-5 p-5 rounded-3xl transition-all ${activeTab === 'analyze' ? 'bg-brand/20 text-brand ring-1 ring-brand/30' : 'text-text-muted hover:bg-white/5'}`}
                     >
-                      <div className={`p-2.5 rounded-xl ${activeTab === 'analyze' ? 'bg-brand text-white' : 'bg-white/5'}`}>
-                        <Zap className="w-5 h-5" />
+                      <div className={`p-3 rounded-2xl ${activeTab === 'analyze' ? 'bg-brand text-white shadow-lg shadow-brand/40' : 'bg-white/10'}`}>
+                        <Zap className="w-6 h-6" />
                       </div>
                       <div className="text-left">
-                        <p className="font-bold text-lg">জেনারেট কনটেন্ট</p>
-                        <p className="text-xs opacity-60">ভাইরাল ম্যাজিক শুরু করুন</p>
+                        <p className="font-black text-lg">জেনারেট কনটেন্ট</p>
+                        <p className="text-xs opacity-60 font-medium">ভাইরাল ম্যাজিক শুরু করুন</p>
                       </div>
                     </button>
                   </div>
 
-                  <div className="pt-20">
-                    <button className="w-full btn-primary py-5 rounded-3xl font-black uppercase tracking-widest text-sm shadow-2xl shadow-brand/40">
-                      Start Creating Now
-                    </button>
+                  <div className="mt-auto space-y-6">
+                    <div className="p-6 bg-white/5 rounded-[2.5rem] border border-white/10">
+                      <p className="text-xs font-bold text-center text-text-muted mb-4">স্বাগতম, আপনার জার্নি শুরু হোক</p>
+                      <button className="w-full btn-primary py-5 rounded-2xl font-black uppercase tracking-widest text-sm shadow-2xl shadow-brand/40">
+                        Start Creating Now
+                      </button>
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -1018,12 +1026,13 @@ export default function App() {
             </div>
 
             <div className="space-y-8">
-              <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-brand">Products</h4>
+              <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-brand">আমাদের সার্ভিসসমূহ</h4>
               <ul className="space-y-4 text-sm font-bold text-text-muted">
-                <li><button onClick={() => { setActiveTab('analyze'); setResult(null); }} className="hover:text-brand transition-colors">Video Optimizer</button></li>
-                <li><button onClick={() => { setActiveTab('transcribe'); setResult(null); }} className="hover:text-brand transition-colors">Smart Transcriber</button></li>
-                <li><a href="#" className="hover:text-brand transition-colors">Elite Viral Strategy</a></li>
-                <li><a href="#" className="hover:text-brand transition-colors">SEO Matrix</a></li>
+                <li><button onClick={() => { setActiveTab('analyze'); setResult(null); }} className="hover:text-brand transition-colors flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-brand" /> ভাইরাল টাইটেল জেনারেটর</button></li>
+                <li><button onClick={() => { setActiveTab('analyze'); setResult(null); }} className="hover:text-brand transition-colors flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-brand" /> হাই-কনভার্টিং ডেসক্রিপশন</button></li>
+                <li><button onClick={() => { setActiveTab('analyze'); setResult(null); }} className="hover:text-brand transition-colors flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-brand" /> এসইও অপ্টিমাইজড ট্যাগ</button></li>
+                <li><button onClick={() => { setActiveTab('analyze'); setResult(null); }} className="hover:text-brand transition-colors flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-brand" /> প্রফেশনাল বায়ো এবং শোল্ডার ব্যাগ</button></li>
+                <li><button onClick={() => { setActiveTab('analyze'); setResult(null); }} className="hover:text-brand transition-colors flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-brand" /> থাম্বনেইল হুক স্ট্র্যাটেজি</button></li>
               </ul>
             </div>
 
